@@ -17,7 +17,8 @@ provider:
   #         Action: dynamodb:UpdateItem
   environment:
     # NOTES_TABLE_NAME: notes
-    NOTES_TABLE_NAME: !Ref notesTable
+    # NOTES_TABLE_NAME: !Ref notesTable
+    NOTES_TABLE_NAME: ${self:resources.Resources.notesTable.Properties.TableName}
 
 plugins:
   - serverless-iam-roles-per-function
@@ -27,7 +28,11 @@ functions:
     handler: handler.createNote
     iamRoleStatements:
       - Effect: "Allow"
-        Resource: !GetAtt notesTable.Arn
+        # Resource: !GetAtt notesTable.Arn
+        Resource:
+        Fn::GetAtt:
+          - notesTable
+          - Arn
         Action: dynamodb:PutItem
     events:
       - http:
@@ -38,7 +43,10 @@ functions:
     handler: handler.updateNote
     iamRoleStatements:
       - Effect: "Allow"
-        Resource: !GetAtt notesTable.Arn
+        Resource:
+        Fn::GetAtt:
+          - notesTable
+          - Arn
         Action: dynamodb:UpdateItem
     events:
       - http:
@@ -49,7 +57,10 @@ functions:
     handler: handler.deleteNote
     iamRoleStatements:
       - Effect: "Allow"
-        Resource: !GetAtt notesTable.Arn
+        Resource:
+        Fn::GetAtt:
+          - notesTable
+          - Arn
         Action: dynamodb:DeleteItem
     events:
       - http:
@@ -60,7 +71,10 @@ functions:
     handler: handler.getAllNotes
     iamRoleStatements:
       - Effect: "Allow"
-        Resource: !GetAtt notesTable.Arn
+        Resource:
+        Fn::GetAtt:
+          - notesTable
+          - Arn
         Action: dynamodb:Scan
     events:
       - http:
@@ -71,7 +85,10 @@ functions:
     handler: handler.getNoteById
     iamRoleStatements:
       - Effect: "Allow"
-        Resource: !GetAtt notesTable.Arn
+        Resource:
+        Fn::GetAtt:
+          - notesTable
+          - Arn
         Action: dynamodb:GetItem
     events:
       - http:
@@ -87,9 +104,9 @@ resources:
         TableName: notes
         KeySchema:
           - AttributeName: notesId
-            KeyType: HASH
+            KeyType: HASH # partition key
           # - AttributeName: updatedAt
           #   KeyType: RANGE
         AttributeDefinitions:
           - AttributeName: notesId
-            AttributeType: S
+            AttributeType: S # String

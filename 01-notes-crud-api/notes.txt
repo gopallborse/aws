@@ -1,0 +1,42 @@
+code editor - vs code
+
+runtime - node js
+
+infrastructure as code tool to deploy resources to aws - serverless, aws cdk, terraform, pulumi
+
+-----------------------------------------
+
+npm init
+npm i --save-dev  serverless@3.38
+
+npx serverless create --template aws-nodejs
+or if Serverless installed globally
+npm install -g serverless
+sls create --template aws-nodejs or
+serverless create --template aws-nodejs
+
+create user from aws ui console
+attach required policies
+security credentials - access keys
+
+configure credentials using aws cli or
+serverless -- config credentials gives error Error:
+Serverless command "config credentials" requires "--provider", "--key", "--secret" options. Run "serverless config credentials --help" for more info
+do following
+serverless config credentials --provider aws --key YOUR_AWS_KEY --secret YOUR_AWS_SECRET
+
+serverless -- deploy
+
+for creating resources like dynamodb table, need to visit cloudformation documentation for yaml syntax like
+resources:
+  Resources:
+    notesTable:
+      Type: AWS::DynamoDB::Table
+      Properties: ...
+
+Use document client else we need to do marshalling and unmarshalling i.e. S -> String and vice versa
+
+dev dependencies
+npm i --save-dev @aws-sdk/client-dynamodb
+npm i --save-dev @aws-sdk/lib-dynamodb
+npm i --save-dev serverless-iam-roles-per-function
